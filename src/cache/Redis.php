@@ -8,7 +8,7 @@
  * 1、直接调用redis本身的函数  Redis_tools::$redis->set()
  * 2、调用分装的函数 实例化调用
  */
-namespace Auxiliary\Cache;
+namespace Auxclass\Cache;
 class Redis{
     public static $redis = null ;
     public function __construct()

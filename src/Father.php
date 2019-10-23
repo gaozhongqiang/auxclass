@@ -1,5 +1,5 @@
 <?php
-namespace Auxiliary;
+namespace Auxclass;
 class Father{
 	protected $config=array();
     protected $object_data;

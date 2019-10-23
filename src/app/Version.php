@@ -2,9 +2,9 @@
 /*************************************************************************
 应用版本号判断，包含应用市场和SDK的版本号判断
 **************************************************************************/
-namespace Auxiliary\App;
-use Auxiliary\Cache\Memcache;
-use Auxiliary\Translation\AppConfigOperate;
+namespace Auxclass\App;
+use Auxclass\Cache\Memcache;
+use Auxclass\Translation\AppConfigOperate;
 
 class Version{
 	/****************************************************************************************************************************************

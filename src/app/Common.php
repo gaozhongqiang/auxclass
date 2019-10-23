@@ -1,5 +1,5 @@
 <?php
-namespace Auxiliary\App;
+namespace Auxclass\App;
 class Common{
 
     /*****************************************************************************

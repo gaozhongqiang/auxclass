@@ -2,8 +2,8 @@
 /*************************************************************************
 缓存操作工具类
 **************************************************************************/
-namespace Auxiliary\Cache;
-use Auxiliary\App\Url;
+namespace Auxclass\Cache;
+use Auxclass\App\Url;
 
 class Memcache{
 	public static $max_cache_time=2592000;

@@ -2,7 +2,7 @@
 /***************
 url处理函数文件
 ****************/
-namespace Auxiliary\App;
+namespace Auxclass\App;
 class Url{
 	public static $proxy_web_path_arr=array(
                                             "api"	=>"api_web_x7sy",

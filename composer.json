@@ -1,6 +1,6 @@
 {
-    "name": "auxiliary/auxiliary",
-    "description": "auxiliary tools",
+    "name": "auxclass/auxclass",
+    "description": "auxclass tools",
     "type": "library",
     "authors": [
         {
@@ -14,10 +14,10 @@
     },
     "autoload": {
         "psr-4": {
-            "Auxiliary\\": "src",
-            "Auxiliary\\App\\": "src/app/",
-            "Auxiliary\\Cache\\": "src/cache/",
-            "Auxiliary\\Translation\\": "src/translation/"
+            "Auxclass\\": "src",
+            "Auxclass\\App\\": "src/app/",
+            "Auxclass\\Cache\\": "src/cache/",
+            "Auxclass\\Translation\\": "src/translation/"
         }
     }
 }

@@ -6,9 +6,9 @@
  * Time: 15:30
  * 多语言配置
  */
-namespace Auxiliary\Translation;
-use Auxiliary\App\Version;
-use Auxiliary\Cache\Redis;
+namespace Auxclass\Translation;
+use Auxclass\Father;
+
 class AppConfigOperate extends Father {
     const AREA_CACHE_ALL = 'getAreaALlZbqaAYNXAgz5JgLFd5';//地区缓存key【全部】
     const AREA_CACHE_SINGLE = 'getAreaSINGLEZbqaAYNXAgz5JgLFd5';//地区缓存key【部分】
