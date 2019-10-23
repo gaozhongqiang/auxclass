@@ -15,6 +15,11 @@ class Common{
 		if(is_null($delimiter)) return preg_split('//u', $string, -1, PREG_SPLIT_NO_EMPTY);
 		return explode($delimiter,$string);
 	}
+    public static function get_arr_implode_string($arr=array(),$delimiter=""){
+        if(empty($arr)) return "";
+        if(!is_array($arr)) return $arr;
+        return implode($delimiter,$arr);
+    }
 }
 
 

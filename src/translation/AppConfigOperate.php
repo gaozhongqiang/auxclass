@@ -7,11 +7,16 @@
  * 多语言配置
  */
 namespace Auxclass\Translation;
+use Auxclass\App\Arrays;
+use Auxclass\App\Version;
 use Auxclass\Father;
+use Auxclass\Cache\Redis;
+use Auxclass\Cache\Memcache;
 
 class AppConfigOperate extends Father {
     const AREA_CACHE_ALL = 'getAreaALlZbqaAYNXAgz5JgLFd5';//地区缓存key【全部】
     const AREA_CACHE_SINGLE = 'getAreaSINGLEZbqaAYNXAgz5JgLFd5';//地区缓存key【部分】
+    const LANGUAGE_PREG_EX = '#@[(a-z\d)_?]{1,}_\d{1,}@#i';//语言匹配规则
     //语言类型配置
     public static $languageType = array(
         1 => array('id' => 1, 'language' => '中文简体'),
@@ -29,8 +34,8 @@ class AppConfigOperate extends Father {
      * @return array|mixed
      */
     public static function getAreaType($_this,$is_all = 1,$is_foreign = null,$update_cache = false){
-        $out_arr = GetAllDomainCache(self::AREA_CACHE_ALL);
-        $not_all_arr = GetAllDomainCache(self::AREA_CACHE_SINGLE);
+        $out_arr = Memcache::get_all_domain_cache(self::AREA_CACHE_ALL);
+        $not_all_arr = Memcache::get_all_domain_cache(self::AREA_CACHE_SINGLE);
         if(empty($out_arr) || empty($not_all_arr) || $update_cache) {
             $default_arr = array(
                 -10 => array('id' => -10, 'value' => '未定义地区', 'search_field' => array(-10)),
@@ -99,8 +104,8 @@ class AppConfigOperate extends Father {
             }
             $out_arr = $default_arr+$out_arr;
             krsort($out_arr);
-            SetAllDomainCache(self::AREA_CACHE_ALL,$out_arr);
-            SetAllDomainCache(self::AREA_CACHE_SINGLE,$not_all_arr);
+            Memcache::set_all_domain_cache(self::AREA_CACHE_ALL,$out_arr);
+            Memcache::set_all_domain_cache(self::AREA_CACHE_SINGLE,$not_all_arr);
         }
         //var_dump($not_all_arr,$out_arr);
         $real_out_arr = $is_all == 1 ? $out_arr : $not_all_arr;
@@ -251,7 +256,7 @@ class AppConfigOperate extends Father {
             "language = '{$paramArr['language']}'"
         ), 'type_id as id,name as cardname, user_agent, description, instruction', true);
 
-        $cardLanguageInfo = Arrays_tools::return_set_arr_key($cardLanguageInfo, 'id');
+        $cardLanguageInfo = Arrays::return_set_arr_key($cardLanguageInfo, 'id');
 
         $returnData = array_reduce($cardData, function($result, $item) use($cardLanguageInfo) {
             if (array_key_exists($item['id'], $cardLanguageInfo)) {
@@ -296,7 +301,7 @@ class AppConfigOperate extends Father {
             "language = '{$paramArr['language']}'"
         ), 'type_id as id,name as cardname, user_agent, description, instruction', true);
 
-        $cardLanguageInfo = Arrays_tools::return_set_arr_key($cardLanguageInfo, 'id');
+        $cardLanguageInfo = Arrays::return_set_arr_key($cardLanguageInfo, 'id');
 
         $returnData = array_reduce($cardData, function($result, $item) use($cardLanguageInfo) {
             if (array_key_exists($item['id'], $cardLanguageInfo)) {
@@ -341,7 +346,7 @@ class AppConfigOperate extends Father {
             "language = '{$paramArr['language']}'"
         ), 'type_id as coupon_type_id,name as coupon_name, user_agent as desc_info', true);
 
-        $couponLanguageInfo = Arrays_tools::return_set_arr_key($couponLanguageInfo, 'coupon_type_id');
+        $couponLanguageInfo = Arrays::return_set_arr_key($couponLanguageInfo, 'coupon_type_id');
 
         $returnData = array_reduce($couponData, function($result, $item) use($couponLanguageInfo) {
             if (array_key_exists($item['coupon_type_id'], $couponLanguageInfo)) {
@@ -367,10 +372,9 @@ class AppConfigOperate extends Father {
      * @param array|string $return_data 返回的数据
      * @return array|string 数据替换
      */
-    public static function transform_return_data($return_data){
-        $preg_str = "#@[(a-z\d)_?]{1,}_\d{1,}@#i";
+    public static function transformErrorMsg($return_data){
         $language = Version::getI18nLanguage();
-        if(isset($return_data['errormsg']) && !empty($return_data['errormsg']) && is_string($return_data['errormsg']) && preg_match_all($preg_str,$return_data['errormsg'],$match)){
+        if(isset($return_data['errormsg']) && !empty($return_data['errormsg']) && is_string($return_data['errormsg']) && preg_match_all(self::LANGUAGE_PREG_EX,$return_data['errormsg'],$match)){
             if(!empty($match)){
                 foreach ($match[0] as $key => $value){
                     $temp_key = $value."@{$language}@"; //对应语言的缓存
@@ -379,12 +383,40 @@ class AppConfigOperate extends Father {
                         $temp_key = $value."@1@"; //固定为大陆
                         $return_data['errormsg'] = str_replace($value,Redis::get_all_domain_cache($temp_key),$return_data['errormsg']);
                     } else {
-                        $return_data ['errormsg']= str_replace($value,Redis::get_all_domain_cache($temp_key),$return_data['errormsg']);
+                        $return_data['errormsg']= str_replace($value,Redis::get_all_domain_cache($temp_key),$return_data['errormsg']);
                     }
 
                 }
             }
         }
         return $return_data;
+    }
+
+    /**
+     * 翻译数据  ---- 20191023 gzq
+     * @param string $string
+     * @return mixed|string
+     */
+    public static function transformString($string = ''){
+        if(!is_string($string) || empty($string)){
+            return $string;
+        }
+        $language = Version::getI18nLanguage();
+        if(preg_match_all(self::LANGUAGE_PREG_EX,$string,$match)){
+            if(!empty($match)){
+                foreach ($match[0] as $key => $value){
+                    $temp_key = $value."@{$language}@"; //对应语言的缓存
+                    $languageCache = Redis::get_all_domain_cache($temp_key);
+                    if (empty($languageCache)) {
+                        $temp_key = $value."@1@"; //固定为大陆
+                        $string = str_replace($value,Redis::get_all_domain_cache($temp_key),$string);
+                    } else {
+                        $string= str_replace($value,Redis::get_all_domain_cache($temp_key),$string);
+                    }
+
+                }
+            }
+        }
+        return $string;
     }
 }

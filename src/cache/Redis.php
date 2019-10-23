@@ -23,17 +23,17 @@ class Redis{
      */
     public static function getInstance($timeOut = 30){
         if(null === self::$redis){
-            self::$redis = new Redis();
+            self::$redis = new \Redis();
             try{
                 $success = self::$redis->connect(RedisHost,RedisPort,$timeOut);
                 if(!$success){
-                    throw new Exception(self::$redis->getLastError());
+                    throw new \Exception(self::$redis->getLastError());
                 }
                 if(!empty(RedisPass) && !self::$redis->auth(RedisPass)){
-                    throw new Exception(self::$redis->getLastError());
+                    throw new \Exception(self::$redis->getLastError());
                 }
                 return self::$redis;
-            }catch (Exception $e){
+            }catch (\Exception $e){
                 echo $e->getMessage();
                 log_message('error', $e->getMessage());
                 return null;
