@@ -1,0 +1,23 @@
+{
+    "name": "auxiliary/auxiliary",
+    "description": "auxiliary tools",
+    "type": "library",
+    "authors": [
+        {
+            "name": "gaozhongqiang",
+            "email": "1225000209@qq.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+
+    },
+    "autoload": {
+        "psr-4": {
+            "Auxiliary\\": "src",
+            "Auxiliary\\App\\": "src/app/",
+            "Auxiliary\\Cache\\": "src/cache/",
+            "Auxiliary\\Translation\\": "src/translation/"
+        }
+    }
+}
