@@ -40,8 +40,8 @@ class AppConfigOperate extends Father {
             $default_arr = array(
                 -10 => array('id' => -10, 'value' => '未定义地区', 'search_field' => array(-10)),
                 -2 => array('id' => -2, 'value' => '所有海外', 'search_field' => array(-2)),
-                0 => array('id' => 0, 'value' => '所有地区', 'search_field' => array(0)),
             );
+            $default = array(0=>array('id' => 0, 'value' => '所有地区', 'search_field' => array(0)));
             $base_arr = array(-1 => array('value' => '大陆', 'id' => -1));
 
             $_this->getmodel('I18n_regions_model');
@@ -104,6 +104,7 @@ class AppConfigOperate extends Father {
             }
             $out_arr = $default_arr+$out_arr;
             krsort($out_arr);
+            $out_arr = $default + $out_arr;
             Memcache::set_all_domain_cache(self::AREA_CACHE_ALL,$out_arr);
             Memcache::set_all_domain_cache(self::AREA_CACHE_SINGLE,$not_all_arr);
         }
