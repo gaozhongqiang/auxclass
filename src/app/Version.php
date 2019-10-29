@@ -168,11 +168,28 @@ class Version{
     }
 
     /**
+     * 判断当前是否为海外app （应用市场或sdk）
+     * @return bool
+     */
+    private static function is_hw_app()
+    {
+        if (self::is_hwmarket_app() || self::is_hwsdk_app()) {   //如果不是海外的就默认返回大陆地区
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
      * 通过头信息获取是否海外字段  --- 20190531 gzq
      * 通过头信息获取当前地区  ---- 20190929 czj
      * @return int -1:大陆、1：台湾、2：香港
      */
     public static function get_foreign_type(){
+        if (!self::is_hw_app()) {  //不是海外返回中国大陆
+            return -1;
+        }
+
         //先获取i18n -- by czj 20190929
         $i18nArr = self::getI18nInfo();
 
@@ -236,6 +253,10 @@ class Version{
     public static function getI18nLanguage()
     {
         $language = 1;
+        if (!self::is_hw_app()) {   //不是海外返回中文简体
+            return $language;
+        }
+
         $allLanguages = AppConfigOperate::$languageType;
 
         /**
