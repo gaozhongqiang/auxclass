@@ -336,7 +336,7 @@ class AppConfigOperate extends Father {
     {
         if (empty($couponData) || $paramArr['language'] == 1) {
             if ($returnFirst) {
-                return empty($cardData) ? $couponData : array_shift($couponData);
+                return empty($couponData) ? $couponData : array_shift($couponData);
             }
             return $couponData;
         }
@@ -367,6 +367,47 @@ class AppConfigOperate extends Father {
         }
 
         return $returnData;
+    }
+    /**
+     * 根据传入的游戏公告进行语言翻译
+     * @param $_this
+     * @param array $paramArr  接口接收到的值，language值不能为空
+     * @param bool $returnFirst 是否返回第一个数据
+     * @param array $gameNoticesData 公告内容
+     * @return array|mixed
+     */
+    public static function flushGameNoticesLanaguage($_this,$paramArr,$returnFirst = false,$gameNoticesData = array()){
+        if (empty($gameNoticesData) || $paramArr['language'] == 1) {
+            if ($returnFirst) {
+                return empty($gameNoticesData) ? $gameNoticesData : array_shift($gameNoticesData);
+            }
+            return $gameNoticesData;
+        }
+        $id_arr = array_column_default($gameNoticesData,'id');
+        if(empty($id_arr)){
+            if ($returnFirst) {
+                return empty($gameNoticesData) ? $gameNoticesData : array_shift($gameNoticesData);
+            }
+            return $gameNoticesData;
+        }
+        $_this->getmodel('I18n_game_notices_language_model');
+        $gameNoticesLanguageData = $_this->I18n_game_notices_language_model->get_have_data(array("pid in (".format_sql_in($id_arr).")","language = '{$paramArr['language']}'","type = 1"),"pid,notice_title,content",true);
+        $gameNoticesLanguageData = Arrays::return_set_arr_key($gameNoticesLanguageData,'pid');
+
+        $gameNoticesData = array_map(function ($value) use ($gameNoticesLanguageData){
+            if(array_key_exists($value['id'],$gameNoticesLanguageData)){
+                foreach ($gameNoticesLanguageData[$value['id']] as $key => $val){
+                    if(array_key_exists($key,$value)){
+                        $value[$key] = $val;
+                    }
+                }
+            }
+            return $value;
+        },$gameNoticesData);
+        if ($returnFirst) {
+            return empty($gameNoticesData) ? $gameNoticesData : array_shift($gameNoticesData);
+        }
+        return $gameNoticesData;
     }
     /**
      * 语言+标识 ==》 翻译
