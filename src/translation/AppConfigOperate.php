@@ -461,4 +461,52 @@ class AppConfigOperate extends Father {
         }
         return $string;
     }
+
+    /**
+     * 根据传入的通知消息进行语言翻译
+     * @param $_this
+     * @param array $paramArr 接口接收到的值，language值不能为空
+     * @param bool $returnFirst 是否返回第一个数据
+     * @param array $messageData 消息内容
+     * @param int $messageType 消息类型【1：app消息通知，2：sdk私信】
+     * @return array|mixed
+     */
+    public static function flushMessageLanguage($_this, $paramArr, $returnFirst = false, $messageData = array(), $messageType = 1)
+    {
+        if (empty($messageData) || $paramArr['language'] == 1) {
+            if ($returnFirst) {
+                return empty($messageData) ? $messageData : array_shift($messageData);
+            }
+            return $messageData;
+        }
+        $id_arr = array_column_default($messageData, 'apply_id');
+        if (empty($id_arr)) {
+            if ($returnFirst) {
+                return empty($messageData) ? $messageData : array_shift($messageData);
+            }
+            return $messageData;
+        }
+        $_this->getmodel('I18n_message_language_model');
+        if ($messageType == 1) {
+            $messageLanguageData = $_this->I18n_message_language_model->get_have_data(array("message_id in (" . format_sql_in($id_arr) . ")", "language = '{$paramArr['language']}'", "message_type = '{$messageType}'"), "message_id,title as message_title,content as message_notice", true);
+        } else {
+            $messageLanguageData = $_this->I18n_message_language_model->get_have_data(array("message_id in (" . format_sql_in($id_arr) . ")", "language = '{$paramArr['language']}'", "message_type = '{$messageType}'"), "message_id,title as letter_title,content as letter_content", true);
+        }
+        $messageLanguageData = Arrays::return_set_arr_key($messageLanguageData, 'message_id');
+
+        $messageData = array_map(function ($value) use ($messageLanguageData) {
+            if (array_key_exists($value['apply_id'], $messageLanguageData)) {
+                foreach ($messageLanguageData[$value['apply_id']] as $key => $val) {
+                    if (array_key_exists($key, $value)) {
+                        $value[$key] = $val;
+                    }
+                }
+            }
+            return $value;
+        }, $messageData);
+        if ($returnFirst) {
+            return empty($messageData) ? $messageData : array_shift($messageData);
+        }
+        return $messageData;
+    }
 }
