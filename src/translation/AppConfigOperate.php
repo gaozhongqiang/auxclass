@@ -105,6 +105,7 @@ class AppConfigOperate extends Father {
             $out_arr = $default_arr+$out_arr;
             krsort($out_arr);
             $out_arr = $default + $out_arr;
+            $not_all_arr = $not_all_arr+$default_arr;
             Memcache::set_all_domain_cache(self::AREA_CACHE_ALL,$out_arr);
             Memcache::set_all_domain_cache(self::AREA_CACHE_SINGLE,$not_all_arr);
         }
