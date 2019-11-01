@@ -144,30 +144,34 @@ class AppConfigOperate extends Father {
         $game_area_all_data = ReturnSetSmallValueToKey($game_area_all_data,'os_type',array(),array(1,2,3));
         $game_area_data = ReturnSetArrKey(array_merge($game_area_all_data[1],$game_area_all_data[2]),"gid");
         $h5game_area_data = ReturnSetArrKey($game_area_all_data[3],"gid");
-        $game_data = array_reduce($game_data,function ($result,$item) use ($game_area_data){
-            if(array_key_exists($item['gid'],$game_area_data)){
-                $temp_arr = $game_area_data[$item['gid']];
-                foreach ($item as $key => $value){
-                    if(array_key_exists($key,$temp_arr)){
-                        $item[$key] = $temp_arr[$key];
+        if(!empty($game_data)) {
+            $game_data = array_reduce($game_data, function ($result, $item) use ($game_area_data) {
+                if (array_key_exists($item['gid'], $game_area_data)) {
+                    $temp_arr = $game_area_data[$item['gid']];
+                    foreach ($item as $key => $value) {
+                        if (array_key_exists($key, $temp_arr)) {
+                            $item[$key] = $temp_arr[$key];
+                        }
                     }
+                    $result[] = $item;
                 }
-                $result[] = $item;
-            }
-            return $result;
-        },array());
-        $h5game_data = array_reduce($h5game_data,function ($result,$item) use ($h5game_area_data){
-            if(array_key_exists($item['gid'],$h5game_area_data)){
-                $temp_arr = $h5game_area_data[$item['gid']];
-                foreach ($item as $key => $value){
-                    if(array_key_exists($key,$temp_arr)){
-                        $item[$key] = $temp_arr[$key];
+                return $result;
+            }, array());
+        }
+        if(!empty($h5game_data)) {
+            $h5game_data = array_reduce($h5game_data, function ($result, $item) use ($h5game_area_data) {
+                if (array_key_exists($item['gid'], $h5game_area_data)) {
+                    $temp_arr = $h5game_area_data[$item['gid']];
+                    foreach ($item as $key => $value) {
+                        if (array_key_exists($key, $temp_arr)) {
+                            $item[$key] = $temp_arr[$key];
+                        }
                     }
+                    $result[] = $item;
                 }
-                $result[] = $item;
-            }
-            return $result;
-        },array());
+                return $result;
+            }, array());
+        }
         //单游戏处理
         if($return_first){
             $game_data = empty($game_data) ? $game_data : $game_data[0];
@@ -203,30 +207,34 @@ class AppConfigOperate extends Father {
         $game_language_all_data = ReturnSetSmallValueToKey($game_language_all_data,'os_type',array(),array(1,2,3));
         $game_language_data = ReturnSetArrKey(array_merge($game_language_all_data[1],$game_language_all_data[2]),"gid");
         $h5game_language_data = ReturnSetArrKey($game_language_all_data[3],"gid");
-        $game_data = array_reduce($game_data,function ($result,$item) use ($game_language_data){
-            if(array_key_exists($item['gid'],$game_language_data)){
-                $temp_arr = $game_language_data[$item['gid']];
-                foreach ($item as $key => $value){
-                    if(array_key_exists($key,$temp_arr)){
-                        $item[$key] = $temp_arr[$key];
+        if(!empty($game_data)) {
+            $game_data = array_reduce($game_data, function ($result, $item) use ($game_language_data) {
+                if (array_key_exists($item['gid'], $game_language_data)) {
+                    $temp_arr = $game_language_data[$item['gid']];
+                    foreach ($item as $key => $value) {
+                        if (array_key_exists($key, $temp_arr)) {
+                            $item[$key] = $temp_arr[$key];
+                        }
                     }
                 }
-            }
-            $result[] = $item;
-            return $result;
-        },array());
-        $h5game_data = array_reduce($h5game_data,function ($result,$item) use ($h5game_language_data){
-            if(array_key_exists($item['gid'],$h5game_language_data)){
-                $temp_arr = $h5game_language_data[$item['gid']];
-                foreach ($item as $key => $value){
-                    if(array_key_exists($key,$temp_arr)){
-                        $item[$key] = $temp_arr[$key];
+                $result[] = $item;
+                return $result;
+            }, array());
+        }
+        if(!empty($h5game_data)) {
+            $h5game_data = array_reduce($h5game_data, function ($result, $item) use ($h5game_language_data) {
+                if (array_key_exists($item['gid'], $h5game_language_data)) {
+                    $temp_arr = $h5game_language_data[$item['gid']];
+                    foreach ($item as $key => $value) {
+                        if (array_key_exists($key, $temp_arr)) {
+                            $item[$key] = $temp_arr[$key];
+                        }
                     }
                 }
-            }
-            $result[] = $item;
-            return $result;
-        },array());
+                $result[] = $item;
+                return $result;
+            }, array());
+        }
         //单游戏处理
         if($return_first){
             $game_data = empty($game_data) ? $game_data : $game_data[0];
